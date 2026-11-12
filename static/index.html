@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>RAISE Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <div><strong>RAISE Assistant</strong><span>Discovery → solution design</span></div>
+      </div>
+      <div class="top-actions">
+        <span id="serverStatus" class="status-pill"><i></i> Checking local service</span>
+        <button id="setupButton" class="button ghost">Provider setup</button>
+      </div>
+    </header>
+
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-heading">
+          <div><span class="eyebrow">Workspace</span><h2>Projects</h2></div>
+          <button id="newProjectButton" class="icon-button" title="New project">+</button>
+        </div>
+        <div id="projectList" class="project-list"></div>
+        <div class="privacy-note"><span>Local-first</span> Keys and customer files remain on this computer unless sent to the chosen model provider.</div>
+      </aside>
+
+      <main id="main" class="main">
+        <section id="emptyState" class="empty-state">
+          <div class="empty-graphic"><span>1</span><b>→</b><span>2</span></div>
+          <h1>Turn evidence into a defensible submission.</h1>
+          <p>Create a project, upload the source pack, build a traceable discovery, then carry approved requirements into solution design.</p>
+          <button id="emptyCreateButton" class="button primary">Create your first project</button>
+        </section>
+
+        <section id="workspace" class="workspace hidden">
+          <div class="project-header">
+            <div>
+              <span class="eyebrow">Active project</span>
+              <input id="projectName" class="title-input" aria-label="Project name" />
+              <input id="projectDescription" class="description-input" placeholder="Short customer or case description" aria-label="Project description" />
+            </div>
+            <div class="model-picker">
+              <label>Model provider<select id="providerSelect"></select></label>
+              <label>Model ID<input id="modelInput" placeholder="Use provider default" /></label>
+              <button id="saveProjectButton" class="button secondary">Save settings</button>
+              <button id="deleteProjectButton" class="button danger">Delete project</button>
+            </div>
+          </div>
+
+          <nav class="task-tabs" aria-label="RAISE tasks">
+            <button class="task-tab active" data-task="task1"><span>Task 1</span><strong>Discovery</strong><small>Problem, evidence, requirements</small></button>
+            <div class="handoff-arrow">→</div>
+            <button class="task-tab" data-task="task2"><span>Task 2</span><strong>Solution design</strong><small>Architecture, controls, validation</small></button>
+          </nav>
+
+          <div class="workspace-grid">
+            <section class="panel sources-panel">
+              <div class="panel-title"><div><span class="eyebrow">Grounding</span><h3>Supporting documents</h3></div><span id="sourceCount" class="count">0</span></div>
+              <p class="helper">Drop everything here. RAISE automatically identifies evidence, instructions, templates, approved discovery, and feedback.</p>
+              <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="Choose files or drop local files here">
+                <input id="fileInput" type="file" multiple accept=".txt,.md,.json,.yaml,.yml,.csv,.tsv,.xlsx,.docx,.pdf,.zip,.png,.jpg,.jpeg,.webp,.gif" />
+                <strong>Choose or drop files here</strong><span>PDF, DOCX, XLSX, Markdown, ZIP or images</span>
+              </div>
+              <div id="documentList" class="document-list"></div>
+            </section>
+
+            <section class="panel coach-panel">
+              <div class="panel-title"><div><span class="eyebrow">Session memory</span><h3 id="coachTitle">Discovery coach</h3></div><button id="clearComposer" class="text-button">Clear input</button></div>
+              <div id="messages" class="messages"></div>
+              <div id="pendingImages" class="pending-images"></div>
+              <div class="composer">
+                <textarea id="messageInput" rows="4" placeholder="Ask about the evidence, paste a task, or request the next concrete step…"></textarea>
+                <div class="composer-actions">
+                  <label class="attach-button" title="Attach screenshots"><input id="imageInput" type="file" multiple accept="image/png,image/jpeg,image/webp,image/gif" />＋ Screenshot</label>
+                  <button id="sendButton" class="button primary">Send</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel draft-panel">
+              <div class="panel-title">
+                <div><span class="eyebrow">Submission artifact</span><h3 id="draftTitle">discovery.md</h3></div>
+                <span id="templateBadge" class="template-badge">Fallback structure</span>
+              </div>
+              <div class="draft-toolbar">
+                <button id="generateButton" class="button primary">Generate grounded draft</button>
+                <button id="reviewButton" class="button secondary">Review readiness</button>
+                <button id="saveDraftButton" class="button ghost">Save</button>
+                <button id="historyButton" class="button ghost">History</button>
+                <button id="downloadButton" class="button ghost">Download .md</button>
+                <div class="draft-view-toggle" role="group" aria-label="Submission artifact view">
+                  <button id="editDraftButton" class="view-toggle active" type="button" aria-pressed="true">Edit Markdown</button>
+                  <button id="previewDraftButton" class="view-toggle" type="button" aria-pressed="false">Preview</button>
+                </div>
+              </div>
+              <textarea id="draftEditor" class="draft-editor" spellcheck="false" placeholder="Your draft will appear here. You can edit and save it at any time."></textarea>
+              <div id="draftPreview" class="draft-preview markdown-view hidden" aria-live="polite"></div>
+              <div class="draft-footer"><span id="draftStatus">Not saved</span><span id="draftMode">Markdown source</span></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="projectDialog">
+      <form id="projectForm" method="dialog">
+        <div class="dialog-heading"><div><span class="eyebrow">New workspace</span><h2>Create project</h2></div><button type="button" class="icon-button close-dialog">×</button></div>
+        <label class="field">Project name<input id="newProjectName" required maxlength="120" placeholder="e.g. AeroGlobal RAISE assessment" /></label>
+        <label class="field">Description<textarea id="newProjectDescription" rows="3" placeholder="Customer, scenario or cohort"></textarea></label>
+        <label class="field">Starting provider<select id="newProviderSelect"></select></label>
+        <div class="dialog-actions"><button type="button" class="button ghost close-dialog">Cancel</button><button type="submit" class="button primary">Create project</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="setupDialog" class="setup-dialog">
+      <div class="dialog-heading"><div><span class="eyebrow">Diagnostics</span><h2>Model providers</h2></div><button type="button" class="icon-button close-setup">×</button></div>
+      <p class="helper">Credentials are read by the local server from <code>.env</code>. They are never returned to this page. To add another provider, run <code>.venv/bin/python scripts/configure.py</code> and restart the app.</p>
+      <div id="providerCards" class="provider-cards"></div>
+      <div class="setup-help"><strong>Vertex not working?</strong><code>./doctor.sh</code><code>bash scripts/gcp_local_auth.sh --project YOUR_PROJECT_ID</code></div>
+      <div class="dialog-actions"><button type="button" class="button primary close-setup">Done</button></div>
+    </dialog>
+
+    <dialog id="historyDialog">
+      <div class="dialog-heading"><div><span class="eyebrow">Saved revisions</span><h2>Draft history</h2></div><button type="button" class="icon-button close-history">×</button></div>
+      <p class="helper">Restoring a revision creates a new saved version; your current text is preserved in history.</p>
+      <div id="historyList" class="history-list"></div>
+      <div class="dialog-actions"><button type="button" class="button primary close-history">Done</button></div>
+    </dialog>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
+

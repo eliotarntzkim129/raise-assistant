@@ -1,0 +1,21 @@
+incident_id: INC-2048
+occurred_at: 2026-10-18T17:42:00-07:00
+severity: high
+summary: Duplicate compensation recommendations were displayed during a rail disruption.
+systems_involved:
+  - incident-management
+  - customer-compensation
+observed_behavior:
+  - The same passenger case was processed twice after a controller refreshed the page.
+  - One recommendation was for USD 320 and did not show the required Finance approval warning.
+  - No payment was executed because the controller stopped the workflow.
+root_cause_status: under-investigation
+confirmed_contributors:
+  - The prototype did not use an idempotency key for a compensation recommendation.
+  - The prototype cached an approval status for five minutes.
+required_follow_up:
+  - Every externally actionable recommendation must use a stable idempotency key.
+  - Approval state must be read at action time rather than reused from a response cache.
+  - Values above the current USD 250 policy threshold must be routed to Finance approval.
+owner: Customer Platforms Engineering
+target_review_date: 2026-11-20

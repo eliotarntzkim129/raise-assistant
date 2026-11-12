@@ -1,0 +1,11 @@
+metric,confirmed_value,source_owner,notes
+Average service cases per day,2400,Operations Analytics,Thirty-day average
+Severe-weather peak intake,180 events per minute,Operations Analytics,Observed for periods up to 20 minutes
+Staffing API limit,60 requests per second,Workforce Systems,Read-only REST interface
+Notification gateway limit,100 requests per second,Customer Communications,Regional versus global limit is unresolved
+Vehicle-location maximum observed delay,45 seconds,Transit Technology,Acceptable freshness is unresolved
+Service window,05:00-01:00 Pacific Time,Operations Control,Daily
+Event acknowledgement target,95 percent within 15 seconds,Operations Director,Required for pilot
+Decision-ready brief target,Median 3 minutes or less,Operations Director,Required for pilot
+Audit retention,365 days,CISO,Approved pilot constraint
+Approved automatic payment limit,0,Operations and Security,No automatic payments are approved for Phase 1
